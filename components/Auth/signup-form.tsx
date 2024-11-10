@@ -1,57 +1,103 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { GitPullRequestCreateIcon } from "lucide-react"
-import { formSchema } from '@/schemas/auth.schema'
-import Link from 'next/link'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { GitPullRequestCreateIcon } from "lucide-react";
+import { formSchema } from "@/schemas/auth.schema";
+import Link from "next/link";
+import { signup } from "@/app/actions/signup";
+import toast, {Toaster} from "react-hot-toast";
+import { useRouter } from 'next/navigation'
+import { Loader } from "@/helpers/Loader";
 
 
 export function SignupForm() {
-  const [isEmailSignUp, setIsEmailSignUp] = useState(false)
+  const [isEmailSignUp, setIsEmailSignUp] = useState(false);
+  const [ loading, setLoading ] = useState(false)
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true)
+    try {
+      const response = await signup(values);
+      console.log(response);
+      
+      if (response.success) {
+        toast.success(response.message || "success", {
+          duration: 4000,
+          position: "top-right",
+        });
+        form.reset();
+        router.push("/login")
+        setLoading(false)
+      }else{
+        toast.error(response.error || "failed", {
+          duration: 4000,
+          position: "top-right",
+        })
+        setLoading(false)
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error,{
+        duration: 4000,
+          position: "top-right",
+      })
+      setLoading(false)
+    }
+  }
+
+  if(loading){
+    return <Loader />
   }
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Background Image Section */}
-      <div 
-        className="hidden lg:block bg-cover bg-center" 
+      <div
+        className="hidden lg:block bg-cover bg-center"
         style={{
           backgroundImage: "url('/images/signup-bg.jpg')",
-          backgroundColor: "#2DD4BF"
+          backgroundColor: "#2DD4BF",
         }}
       />
-      
+
       {/* Form Section */}
       <div className="flex items-center justify-center p-6">
         <Card className="w-full max-w-md border-none shadow-none">
           <CardHeader className="space-y-2">
-            <CardTitle className="text-4xl font-bold tracking-tight">Join us today</CardTitle>
+            <CardTitle className="text-4xl font-bold tracking-tight">
+              Join us today
+            </CardTitle>
             <p className="text-3xl text-muted-foreground">To Explore</p>
           </CardHeader>
           <CardContent className="space-y-4">
             {!isEmailSignUp ? (
               <>
                 {/* Google Sign Up Button */}
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full h-12 text-base font-normal"
                   onClick={() => console.log("Google sign up")}
                 >
@@ -77,8 +123,8 @@ export function SignupForm() {
                 </Button>
 
                 {/* Apple Sign Up Button */}
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full h-12 text-base font-normal"
                   onClick={() => console.log("Apple sign up")}
                 >
@@ -92,12 +138,14 @@ export function SignupForm() {
                     <div className="w-full border-t"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="bg-background px-2 text-muted-foreground">OR</span>
+                    <span className="bg-background px-2 text-muted-foreground">
+                      OR
+                    </span>
                   </div>
                 </div>
 
                 {/* Email/Phone Sign Up Button */}
-                <Button 
+                <Button
                   className="w-full h-12 text-base"
                   onClick={() => setIsEmailSignUp(true)}
                 >
@@ -106,7 +154,10 @@ export function SignupForm() {
               </>
             ) : (
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={form.control}
                     name="email"
@@ -136,9 +187,9 @@ export function SignupForm() {
                   <Button type="submit" className="w-full h-12 text-base">
                     Sign Up
                   </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     className="w-full h-12 text-base"
                     onClick={() => setIsEmailSignUp(false)}
                   >
@@ -167,20 +218,23 @@ export function SignupForm() {
 
             {/* Login Link */}
             <div className="text-center">
-              <p className="text-muted-foreground mb-2">Already have an account?</p>
+              <p className="text-muted-foreground mb-2">
+                Already have an account?
+              </p>
               <Link href="/login">
-              <Button 
-                variant="outline" 
-                className="w-full h-12 text-base font-normal"
-                onClick={() => console.log("Log in")}
-              >
-                Log in
-              </Button>
+                <Button
+                  variant="outline"
+                  className="w-full h-12 text-base font-normal"
+                  onClick={() => console.log("Log in")}
+                >
+                  Log in
+                </Button>
               </Link>
             </div>
           </CardContent>
         </Card>
       </div>
+      <Toaster />
     </div>
-  )
+  );
 }
