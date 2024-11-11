@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import User from "@/models/users.models"
-import { connectDB } from "@/Database/db.connect";
+// import User from "@/models/users.models"
+// import { connectDB } from "@/Database/db.connect";
 
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -9,16 +9,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
-      credentials: {
-        email: {},
-        password: {},
-      },
-      authorize: async (credentials) => {
-        console.log(credentials);
-        connectDB();
-        const { email, password } = credentials;
+      // credentials: {
+      //   email: {},
+      //   password: {},
+      // },
+      // authorize: async (credentials) => {
+      //   console.log(credentials);
+      //   connectDB();
+      //   const { email, password } = credentials;
         
-      },
+      // },
     }),
   ],
 })
