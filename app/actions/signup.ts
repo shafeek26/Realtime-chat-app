@@ -10,12 +10,12 @@ export const signup = async (formData: { email: string; password: string }) => {
     // Normalize email to lowercase to ensure consistent comparison
     const normalizedEmail = email.toLowerCase().trim();
 
-    const existingUser = await User.findOne({ 
-        email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } 
-      });
+    const existingUser = await User.findOne({
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
+    });
 
     if (existingUser) {
-      throw new Error("An account with this email already exists")
+      throw new Error("An account with this email already exists");
     }
 
     // password hashing
@@ -28,12 +28,19 @@ export const signup = async (formData: { email: string; password: string }) => {
       password: hashedPassword,
     });
 
-    return { success: true, id: user._is, user: user.email, message:"Account created successfully. You can now log in" };
+    return {
+      success: true,
+      message: "Account created successfully. You can now log in.",
+      user: {
+        id: user._id.toString(),
+        email: user.email
+      }
+    };
   } catch (error) {
+    console.error("Signup error:", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "An unknown error occurred",
+      error: error instanceof Error ? error.message : "An unexpected error occurred"
     };
   }
 };

@@ -20,7 +20,7 @@ import { formSchema } from "@/schemas/auth.schema";
 import Link from "next/link";
 import { signup } from "@/app/actions/signup";
 import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { Loader } from "@/components/ui/Loader";
 
 export function SignupForm() {
@@ -38,13 +38,13 @@ export function SignupForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    const loadingToast = toast.loading('Creating your account...');
+    const loadingToast = toast.loading("Creating your account...");
 
     try {
       const response = await signup(values);
-      
+
       toast.dismiss(loadingToast);
-      
+
       if (response.success) {
         toast.success(response.message || "Account created successfully!");
         form.reset();
@@ -54,14 +54,16 @@ export function SignupForm() {
       }
     } catch (error) {
       toast.dismiss(loadingToast);
-      toast.error(typeof error === 'string' ? error : 'An unexpected error occurred');
+      toast.error(
+        typeof error === "string" ? error : "An unexpected error occurred"
+      );
       console.error(error);
     } finally {
       setIsLoading(false);
     }
   }
 
-  const handleSocialSignup = (provider: 'google' | 'github') => {
+  const handleSocialSignup = (provider: "google" | "github") => {
     toast.loading(`Connecting to ${provider}...`);
     // Add your social signup logic here
   };
@@ -93,7 +95,7 @@ export function SignupForm() {
                 <Button
                   variant="outline"
                   className="w-full h-12 text-base font-normal"
-                  onClick={() => handleSocialSignup('google')}
+                  onClick={() => handleSocialSignup("google")}
                   disabled={isLoading}
                 >
                   <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
@@ -106,7 +108,7 @@ export function SignupForm() {
                 <Button
                   variant="outline"
                   className="w-full h-12 text-base font-normal"
-                  onClick={() => handleSocialSignup('github')}
+                  onClick={() => handleSocialSignup("github")}
                   disabled={isLoading}
                 >
                   <GitPullRequestCreateIcon className="mr-2 h-5 w-5" />
@@ -147,9 +149,9 @@ export function SignupForm() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Enter your email" 
-                            {...field} 
+                          <Input
+                            placeholder="Enter your email"
+                            {...field}
                             disabled={isLoading}
                           />
                         </FormControl>
@@ -164,10 +166,10 @@ export function SignupForm() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input 
+                          <Input
                             type="password"
-                            placeholder="Enter your password" 
-                            {...field} 
+                            placeholder="Enter your password"
+                            {...field}
                             disabled={isLoading}
                           />
                         </FormControl>
@@ -175,8 +177,8 @@ export function SignupForm() {
                       </FormItem>
                     )}
                   />
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full h-12 text-base relative"
                     disabled={isLoading}
                   >
