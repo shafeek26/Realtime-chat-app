@@ -39,14 +39,14 @@ export function SignupForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     const loadingToast = toast.loading("Creating your account...");
-
+  
     try {
       const response = await signup(values);
-
+  
       toast.dismiss(loadingToast);
-
+  
       if (response.success) {
-        toast.success(response.message || "Account created successfully!");
+        toast.success(response.message || "message");
         form.reset();
         router.push("/login");
       } else {
@@ -54,10 +54,8 @@ export function SignupForm() {
       }
     } catch (error) {
       toast.dismiss(loadingToast);
-      toast.error(
-        typeof error === "string" ? error : "An unexpected error occurred"
-      );
-      console.error(error);
+      console.error("Signup error:", error);
+      toast.error("An unexpected error occurred during signup");
     } finally {
       setIsLoading(false);
     }

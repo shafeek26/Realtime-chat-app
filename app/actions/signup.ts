@@ -15,7 +15,10 @@ export const signup = async (formData: { email: string; password: string }) => {
     });
 
     if (existingUser) {
-      throw new Error("An account with this email already exists");
+      return {
+        success: false,
+        error: "An account with this email already exists"
+      };
     }
 
     // password hashing
